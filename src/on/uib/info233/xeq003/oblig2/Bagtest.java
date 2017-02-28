@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class Bagtest {
 
-	private Bag<String> bag = new Bag<String>(10);
+	private Bag<String> bag = new Bag<String>();
 
 	@Test
 	public void test() {
@@ -23,5 +23,4 @@ public class Bagtest {
 		bag.clear();
 		assertFalse(bag.contains("hey"));
 	}
-
 }

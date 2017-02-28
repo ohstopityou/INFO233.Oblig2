@@ -13,7 +13,7 @@ public class Advisor {
 	}
 
 	private Bag<Lecture> getAllLectures() {
-		lectures = new Bag<Lecture>(10);
+		lectures = new Bag<Lecture>();
 		lectures.add(new Lecture("INFO233", "Mon", 8, 15));
 		lectures.add(new Lecture("INFO234", "Mon", 9, 15));
 		lectures.add(new Lecture("INFO239", "Mon", 9, 15));
