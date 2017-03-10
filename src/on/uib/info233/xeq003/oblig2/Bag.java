@@ -1,10 +1,11 @@
 package on.uib.info233.xeq003.oblig2;
 
+import java.util.Arrays;
+
 public class Bag<T> implements BagInterface<T>
 {	
-	private Node firstNode;
+	private Node<T> firstNode;
 	private int numbOfEntries;
-	//lastNode.next = null
 
 	/**
 	 * Creates an empty bag with specified capacity.
@@ -31,9 +32,9 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	public boolean add(T newEntry)
 	{	
-		Node newNode = new Node(newEntry);
-		newNode.next = firstNode;	//link new node to first in chain
-		firstNode = newNode;		//make newnode chain´s beginning							
+		Node<T> newNode = new Node<>(newEntry);
+		newNode.setNextNode(firstNode);		//link new node to first in chain
+		firstNode = newNode;				//make newnode chain´s beginning							
 		numbOfEntries++;
 		return true;
 	}
@@ -43,8 +44,9 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	public T remove()
 	{
-		T item = firstNode.data;
-		firstNode = firstNode.next;
+		T item = firstNode.getData(); //try nullPointerException
+		firstNode = firstNode.getNextNode();
+		numbOfEntries--;
 		return item;				//returns null if bag is empty
 	}
 	
@@ -54,30 +56,31 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	public boolean remove(T anEntry)
 	{
-		Node current = firstNode;
-		Node previous = null;
-		while (current != null)					//checks current node
+		Node<T> current = firstNode;
+		Node<T> previous = null;
+		while (current != null)						//checks current node
 		{
-			if (current.data == anEntry){ 		//current == object found
-				if (previous == null){			//object is first in chain
-					this.firstNode = current.next;	//sets next node as firstNode
+			if (current.getData() == anEntry) { 	//current == object found
+				if (previous == null){				//object is first in chain
+					firstNode = firstNode.getNextNode();	//sets second node as firstNode
 				} else {
-					previous.next = current.next; 	//sets previous node.next to next node
+					previous.setNextNode(current.getNextNode());	//is null if last in chain
 				}
 				numbOfEntries--;
 				return true;
 			} else {
-				previous = current;				//sets current as previous node
-				current = current.next;			//goes to next node
+				previous = current;					//sets current as previous node
+				current = current.getNextNode();	//goes to next node
 			}
 		} 
-		return false;
+		return false;								//false when current node is null
 	}
 	
 	/**
 	 * clears the current bag by creating a new bag
 	 */
-	public void clear(){
+	public void clear()
+	{
 		firstNode = null;
 		numbOfEntries = 0;
 	}
@@ -88,12 +91,12 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	public boolean contains(T anEntry)
 	{
-		Node current = firstNode;
-		while (current != null) {				//checks current node
-			if (current.data == anEntry){
+		Node<T> current = firstNode;
+		while (current != null) {					//checks current node
+			if (current.getData() == anEntry){
 				return true;
 			} else {
-				current = current.next;			//goes to next node
+				current = current.getNextNode();	//goes to next node
 			}
 		}
 		return false;
@@ -105,13 +108,13 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	public int getFrequencyOf(T anEntry)
 	{
-		Node current = firstNode;
+		Node<T> current = firstNode;
 		int frequency = 0;
-		while (current != null) {				//checks current node
-			if (current.data == anEntry){
-				frequency++;					//adds 1 to frequency
+		while (current != null) {					//checks current node
+			if (current.getData() == anEntry){
+				frequency++;						//adds 1 to frequency
 			} else {
-				current = current.next;			//goes to next node
+				current = current.getNextNode();	//goes to next node
 			}
 		}
 		return frequency;
@@ -121,35 +124,8 @@ public class Bag<T> implements BagInterface<T>
 	 * Creates a new array by looping over the current bag and creating a copy
 	 * @return copy of bag
 	 */
-	public T[] toArray()
-	{
-		//the cast is safe because the new array contains null entries
-		@SuppressWarnings("unchecked")
-		T[] array = (T[]) new Object[numbOfEntries]; //Unchecked cast
-		int index = 0;
-		Node current = firstNode;
-		while (current != null) {
-			array[index] = current.data;
-			index++;
-			current = current.next;
-		}
-		return array;
-	}	
-	
-	private class Node
-	{
-		private T		data;
-		private Node	next;
-		
-		private Node(T dataPortion)
-		{
-			this(dataPortion, null);
-		}// end constructor
-		
-		private Node(T dataPortion, Node nextNode)
-		{
-			data = dataPortion;
-			next = nextNode;
-		}// end constructor
-	}// end node
+	@SuppressWarnings("unchecked")
+	public T[] toArray() {
+		return T[] t = new (T[]) Object T[];
+	}
 }
