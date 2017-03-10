@@ -32,4 +32,15 @@ public class Lecture {
 						", eHour: " + endTime.getHour();
 		return info;
 	}
+	
+	public int compareTo(Lecture other){
+		int thisHour = this.endTime.getHour();
+		int otherHour = other.endTime.getHour();
+		if (thisHour < otherHour){
+			return 1;
+		} else if (thisHour > otherHour){
+			return -1;
+		}
+		return 0;
+	}
 }
