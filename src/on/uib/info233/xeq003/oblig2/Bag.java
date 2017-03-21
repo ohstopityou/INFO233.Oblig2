@@ -2,21 +2,18 @@ package on.uib.info233.xeq003.oblig2;
 
 import java.util.Arrays;
 
-public class Bag<T> implements BagInterface<T>{
-	
-	private T[] bag;
-	private int numbOfEntries = 0;
-	private int maxSize;
+public class Bag<T> implements BagInterface<T>
+{	
+	private Node<T> firstNode;
+	private int numbOfEntries;
 
 	/**
 	 * Creates an empty bag with specified capacity.
 	 * @param capacity of bag
 	 */
-	@SuppressWarnings("unchecked")
-	public Bag(int capacity){
-		maxSize = capacity;
-		//Cast is safe, contains null entries
-		bag = (T[])new Object[maxSize];
+	public Bag(){
+		firstNode = null;
+		numbOfEntries = 0;
 	}
 	
 	/**
@@ -33,66 +30,73 @@ public class Bag<T> implements BagInterface<T>{
 	 * checks if bag is full, if so, adds more space
 	 * then adds entry to bag
 	 */
-	public boolean add(T newEntry){
-		if (numbOfEntries == maxSize) {increaseSize();}
-		bag[numbOfEntries] = newEntry;
+	public boolean add(T newEntry)
+	{	
+		Node<T> newNode = new Node<>(newEntry);
+		newNode.setNextNode(firstNode);		//link new node to first in chain
+		firstNode = newNode;				//make newnode chain´s beginning							
 		numbOfEntries++;
 		return true;
 	}
 	
 	/**
-	 * Increases the size of the bag array by making a copy that has 5 more spaces
+	 * Removes the first entry from bag
 	 */
-	private void increaseSize(){
-		maxSize +=5;
-		bag = Arrays.copyOf(bag, maxSize);
-	}
-	
-	/**
-	 * Removes a random entry from the bag
-	 */
-	public T remove(){
-		int rnd = (int) Math.floor(Math.random() * numbOfEntries);
-		T item = bag[rnd];
-		bag[rnd] = null;
-		return item;
+	public T remove()
+	{
+		T item = firstNode.getData(); //try nullPointerException
+		firstNode = firstNode.getNextNode();
+		numbOfEntries--;
+		return item;				//returns null if bag is empty
 	}
 	
 	/**
 	 * Removes a specified object from the bag
 	 * @return true if object is found, else returns false
 	 */
-	public boolean remove(T anEntry){
-		int i = 0;
-		while (i < maxSize) {
-			if (bag[i] == anEntry)
-			{
-				bag[i] = null;
-				bag[numbOfEntries] = bag[i];
+	public boolean remove(T anEntry)
+	{
+		Node<T> current = firstNode;
+		Node<T> previous = null;
+		while (current != null)						//checks current node
+		{
+			if (current.getData() == anEntry) { 	//current == object found
+				if (previous == null){				//object is first in chain
+					firstNode = firstNode.getNextNode();	//sets second node as firstNode
+				} else {
+					previous.setNextNode(current.getNextNode());	//is null if last in chain
+				}
 				numbOfEntries--;
 				return true;
+			} else {
+				previous = current;					//sets current as previous node
+				current = current.getNextNode();	//goes to next node
 			}
-		}
-		return false;
+		} 
+		return false;								//false when current node is null
 	}
 	
 	/**
 	 * clears the current bag by creating a new bag
 	 */
-	@SuppressWarnings("unchecked")
-	public void clear(){
-		//Cast is safe, contains null entries
-		bag = (T[])new Object[maxSize];
+	public void clear()
+	{
+		firstNode = null;
+		numbOfEntries = 0;
 	}
 	
 	/**
 	 * Loops over the bag and stops when it has found the object
 	 * @return true if object is found, else returns false
 	 */
-	public boolean contains(T anEntry){
-		for (int i = 0; i < numbOfEntries; i++) {
-			if (bag[i] == anEntry){
+	public boolean contains(T anEntry)
+	{
+		Node<T> current = firstNode;
+		while (current != null) {					//checks current node
+			if (current.getData() == anEntry){
 				return true;
+			} else {
+				current = current.getNextNode();	//goes to next node
 			}
 		}
 		return false;
@@ -102,10 +106,16 @@ public class Bag<T> implements BagInterface<T>{
 	 * Loops over the bag and counts how many times the object appears
 	 * @return amount of times the object is found in bag
 	 */
-	public int getFrequencyOf(T anEntry){
+	public int getFrequencyOf(T anEntry)
+	{
+		Node<T> current = firstNode;
 		int frequency = 0;
-		for (int i = 0; i < numbOfEntries; i++) {
-			if (bag[i] == anEntry) {frequency++;}
+		while (current != null) {					//checks current node
+			if (current.getData() == anEntry){
+				frequency++;						//adds 1 to frequency
+			} else {
+				current = current.getNextNode();	//goes to next node
+			}
 		}
 		return frequency;
 	}
@@ -115,13 +125,15 @@ public class Bag<T> implements BagInterface<T>{
 	 * @return copy of bag
 	 */
 	@SuppressWarnings("unchecked")
-	public T[] toArray(){
-		//Cast is safe, contains null entries
-		T[] newbag = (T[])new Object[maxSize];
-		for (int i = 0; i < numbOfEntries; i++){
-			newbag[i] = bag[i];
+	public T[] toArray() {
+		T[] result = (T[])new Object[numbOfEntries];
+		int index = 0;
+		Node currentNode = firstNode;
+		while( (index < numbOfEntries) && (currentNode != null)){
+			result[index] = (T) currentNode.getData();
+			index++;
+			currentNode = currentNode.getNextNode();
 		}
-		return newbag;
+		return result;
 	}
-	
 }

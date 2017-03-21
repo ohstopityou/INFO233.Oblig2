@@ -1,0 +1,32 @@
+OPPGAVETEKST
+
+1.
+Liv´s algorithm should work correcly, though ineffective. It should implement a sorting algorithm on the bag input. I have used a very basic sorting algorithm: 
+For (i to 168) { 
+  //set temp lecture
+  (for j to n) {Compare lecture j to temp, set new if better}
+  //add temp to schedule
+}
+
+2.
+The time complexity of the algorith i believe is 168 * O(N), where 168 is the maximum of lectures per week. O(N) is because the compare code runs n times, where n = number of lectures in bag;
+
+
+
+Psst: I did not schedule enough time for this project. The code is not how I want it to be.
+
+
+
+
+Improved algorithm which i did not have time to implement:
+
+Start with sorting the classes by start day, then start hour. 
+Save as array. Set first array element as temp. Set first element as int point to save location. 
+(For i to n lectures) {
+(while array[i].endHour <= array[point].endHour + maxLectureLength){
+if (array[i].compareTo(tempLecture)) {array[i] = new temp;}
+i++;
+}
+schedule.push(array[i]);
+point = i + 1;
+}
