@@ -126,6 +126,14 @@ public class Bag<T> implements BagInterface<T>
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] toArray() {
-		return T[] t = new (T[]) Object T[];
+		T[] result = (T[])new Object[numbOfEntries];
+		int index = 0;
+		Node currentNode = firstNode;
+		while( (index < numbOfEntries) && (currentNode != null)){
+			result[index] = (T) currentNode.getData();
+			index++;
+			currentNode = currentNode.getNextNode();
+		}
+		return result;
 	}
 }

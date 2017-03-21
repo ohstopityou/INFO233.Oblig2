@@ -1,6 +1,6 @@
 package on.uib.info233.xeq003.oblig2;
 
-public class Lecture {
+public class Lecture implements Comparable<Lecture>{
 	private LectureTime startTime, endTime;
 	private String lectureName;
 	
@@ -9,7 +9,6 @@ public class Lecture {
 		//LectureTime (String day, int hour, int minute) 
 		startTime = new LectureTime(day, hour, 15);
 		endTime = new LectureTime(day, hour + length, 00);
-		//lastLectureStart (20:00)
 	}
 	
 	public LectureTime getStartTime() {
@@ -28,12 +27,14 @@ public class Lecture {
 	public String toString() {
 		String info = 	"Name: " + lectureName + 
 						", Day: " + startTime.getDay() + 
-						", sHour: " + startTime.getHour() +
-						", eHour: " + endTime.getHour();
+						", startHour: " + startTime.getHour() +
+						", endHour: " + endTime.getHour();
 		return info;
 	}
 	
-	public int compareTo(Lecture other){
+	//1 if this lecture ends before other lecture
+	public int compareTo(Lecture other)
+	{ 
 		int thisHour = this.endTime.getHour();
 		int otherHour = other.endTime.getHour();
 		if (thisHour < otherHour){

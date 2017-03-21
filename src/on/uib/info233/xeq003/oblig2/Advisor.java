@@ -5,101 +5,99 @@ import java.util.Random;
 
 public class Advisor {
 	private Bag<Lecture> lectures;
-	private ArrayDeque<Lecture> deque = new ArrayDeque<Lecture>();
-	private Lecture[] bagArray = new Lecture[15];
-	private final static int numbOfLectures = 15;
+	private ArrayDeque<Lecture> schedule = new ArrayDeque<Lecture>();
+	private final static int numbOfLectures = 10;
 	private final static int firstLectureStart = 8;
 	private final static int lastLectureEnd = 23;
-	private final static int  maxLectureLength = 3;
+	private final static int maxLectureLength = 1;
+	private final static int weekLength = 1;
 	String[] days = new String[] {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 	boolean debug = false;
 	
-	public Advisor () 
+	public Advisor ()
 	{
-		getAllLectures();
-		System.out.println("------------Schedule------------");
-		livMakeSchedule(lectures);
-		while (!deque.isEmpty()){
-			System.out.println(deque.remove());
-		}
+		lectures = createLectures();
+		makeSchedule(lectures);
+		printSchedule();
 	}
 	
-	public void livMakeSchedule (Bag<Lecture> bag)
+	public void printSchedule() {
+		System.out.println("------------Schedule------------");
+		while (!schedule.isEmpty()){System.out.println(schedule.remove());}
+	}
+	
+	public ArrayDeque<Lecture> makeSchedule (Bag<Lecture> bag)
 	{
-		//Lecture[] bagArray = bag.toArray();		//create an array from bag
-		for (int i = 0; i < 7; i++) { 				//do for every day in week
+		Object[] bagArray = bag.toArray();					//create an array from bag
+		for (int i = 0; i < weekLength; i++) { 				//do for every day in week
 			
 			String today=days[i];
 			int previousLectureEndHour = 8;			
 			int tempLectureEndHour;			
-
+			
 			boolean addMoreLectures = true;
 			while (addMoreLectures){
 				Lecture tempLecture = null;
 				tempLectureEndHour = lastLectureEnd;
-				//loops to find the best lecture for this hour
-				for (int j = 0; j < bagArray.length; j++) { //do until all lectures have been checked
-					debug("\nProcessing " + bagArray[j] + " : ");
-					if(betterLecture(bagArray[j], today, previousLectureEndHour, tempLectureEndHour)){
-						tempLecture = bagArray[j];		//sets new tempLecture
-						debug("set as new temp");	
-						tempLectureEndHour = tempLecture.getEndTime().getHour();
+				for (int j = 0; j < bagArray.length; j++) { 	//do until all lectures have been checked
+					Lecture currentLecture = (Lecture) bagArray[j];
+					debug("\nProcessing " + currentLecture + " : ");
+					if ((currentLecture.getStartTime().getDay() == today) && 
+						(currentLecture.getStartTime().getHour()) >= previousLectureEndHour){
+						try{
+							if (currentLecture.compareTo(tempLecture) == 1){ //compares end hour
+							tempLecture = currentLecture;		//sets new tempLecture
+							debug("set as new temp");	
+							tempLectureEndHour = tempLecture.getEndTime().getHour();
+						}} catch (NullPointerException e){ // first lecture checked this day which is allowed
+							tempLecture = currentLecture;
+						}
 					}
 				}
-				
 				if (tempLecture == null){			
 					addMoreLectures = false;
+					debug("\nNo more lectures found for " + today);
+					debug("\n-----------------------------");
 				} else {
-					deque.push(tempLecture);	//add lecture to schedule
-					debug("\n" + tempLecture + " : added to deque");
+					schedule.push(tempLecture);	//add lecture to schedule
+					debug("\n" + tempLecture + " : added to schedule");
 					debug("\n-----------------------------");
 					previousLectureEndHour = tempLecture.getEndTime().getHour();
 				}
 			}//while end
 		}
+		schedule = reverseDeque(schedule);
+		return schedule;
 	}
 	
-	//returns true if lecture ends earlier than maxEndHour, while day and startHour is valid
-	private boolean betterLecture(Lecture lecture, String startDay, int minStartHour, int maxEndHour)
-	{
-		
-		String tryLectureDay 	= lecture.getStartTime().getDay();
-		int tryLectureStartHour = lecture.getStartTime().getHour();
-		int tryLectureEndHour 	= lecture.getEndTime().getHour();
-		
-		//System.out.println("minStartHour = " + minStartHour + " tryLectureEndHour = " + tryLectureEndHour);
-		
-		if (tryLectureDay 		== startDay			&&
-			tryLectureEndHour 	<= maxEndHour 		&&
-			tryLectureStartHour >= minStartHour) 
-			{return true;}
-		else return false;
+	//yes iknow this is not efficient
+	public ArrayDeque reverseDeque(ArrayDeque reverseMe) {
+		ArrayDeque<Lecture> reversed = new ArrayDeque<Lecture>();
+		while (!reverseMe.isEmpty()){
+			reversed.push(schedule.remove());
+		}
+		return reversed;
 	}
 	
 	public static void main(String[] args) {
 		Advisor test = new Advisor();
 	}
 
-	public ArrayDeque<Lecture> makeSchedule (Bag<Lecture> bag) {
-		return deque;
-	}
-
-	private void getAllLectures() {
-		lectures = new Bag<Lecture>();
+	public Bag<Lecture> createLectures() {
+		Bag<Lecture> bag = new Bag<Lecture>();
 		for (int i = 0; i < numbOfLectures; i++) {
 			Lecture randomLecture = createRandomLecture(i);
-			lectures.add(randomLecture);
-			//deque.add(randomLecture);
-			bagArray[i] = randomLecture;
+			bag.add(randomLecture);
 		}
+		return bag;
 	}
 	
 	private Lecture createRandomLecture(int classNumber)
 	{
 		String className = "INFO" + classNumber;
-		String day = days[newRandom(0,6)];			//the day the lecture starts
-		int hour = newRandom(firstLectureStart,lastLectureEnd - maxLectureLength);	//starthour
-		int length = newRandom(1, maxLectureLength);				//lectureLength(hours)
+		String day = days[newRandom(0,weekLength -1)];
+		int hour = newRandom(firstLectureStart,lastLectureEnd - maxLectureLength);
+		int length = newRandom(1, maxLectureLength);
 		Lecture lecture = new Lecture(className, day, hour, length);
 		return lecture;
 	}
