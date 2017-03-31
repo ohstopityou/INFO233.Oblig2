@@ -1,25 +1,28 @@
 package on.uib.info233.xeq003.oblig2;
 
-public class LectureTime {
-	private String day;
-	private int hour, minute;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
-	public LectureTime (String day, int hour, int minute) 
+public class LectureTime {
+	private Date date;
+	
+	public LectureTime (int day, int hour, int minute) 
 	{
-		this.day = day;
-		this.hour = hour;
-		this.minute = minute;
+		this.date = new Date(117, 0, day +1, hour, minute);
 	}
 	
-	public String getDay(){
-		return day;
+	public String getDay() {
+		return new SimpleDateFormat("E").format(date);
 	}
 	
-	public int getHour(){
-		return hour;
-	}
+	public int getHour() {return date.getHours();}
 	
-	public int getMinute(){
-		return minute;
+	public int getMinute() {return date.getMinutes();}
+	
+	public Date getDate() {return date;}
+	
+	@Override
+	public String toString() {
+		return new SimpleDateFormat("HH:mm").format(date);
 	}
 }

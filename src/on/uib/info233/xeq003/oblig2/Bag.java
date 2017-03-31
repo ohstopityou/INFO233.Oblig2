@@ -128,7 +128,7 @@ public class Bag<T> implements BagInterface<T>
 	public T[] toArray() {
 		T[] result = (T[])new Object[numbOfEntries];
 		int index = 0;
-		Node currentNode = firstNode;
+		Node<T> currentNode = firstNode;
 		while( (index < numbOfEntries) && (currentNode != null)){
 			result[index] = (T) currentNode.getData();
 			index++;
